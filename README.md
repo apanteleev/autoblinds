@@ -103,9 +103,9 @@ You'll need the following parts:
 Home Assistant supports [MQTT shades](https://www.home-assistant.io/integrations/cover.mqtt) ("covers") natively, so you'll need to add something like this to `configuration.yaml`:
 
 ```yaml
-cover:
-  - platform: mqtt
-    name: "Friendly Name"
+mqtt:
+  cover:
+  - name: "Friendly Name"
     availability:
       # Note that the topic root used here 5 times (home/blinds/)
       # must match MQTT_TOPIC_ROOT defined in constants.h
@@ -118,8 +118,6 @@ cover:
     set_position_topic: "home/blinds/setposition"
     state_topic: "home/blinds/state"
 ```
-
-(This structure works with Home Assistant 2022.5; they changed the rules in 2022.6 a bit)
 
 Obviously, you'll also need an [MQTT broker](https://mosquitto.org), but that's very easy to set up.
 
