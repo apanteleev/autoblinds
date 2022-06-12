@@ -125,8 +125,8 @@ Obviously, you'll also need an [MQTT broker](https://mosquitto.org), but that's 
 
 - Limit switches would solve the issue of position drift: when the motor disengages, the gears move a bit releasing the string tension. That movement is not registered by the controller. Also, if someone moves the shade manually, the limits currently need to be reset because manual motion is also not registered by the MCU.
 - There's no user-friendly way of setting up the Wi-Fi and MQTT parameters. Other devices host an access point that is used for such initial setup.
-- The orientation of the driver module makes the radiator fins horizontal, while vertical orientation is better. Originally I - The orientation of the ESP module on my PCB prevents attaching a USB cable without removing the board from the device.
-used the DRV8825 driver, and its radiator could be attached the other way.
+- The orientation of the driver module makes the radiator fins horizontal, while vertical orientation is better. Originally I used the DRV8825 driver, and its radiator could be attached the other way.
+- The orientation of the ESP module on my PCB prevents attaching a USB cable without removing the board from the device.
 - No barrel connector for power, although it's not much of a problem as the cable just goes through one of the vent slots and into the cord cover.
 - Tiny round buttons sticking out don't look so well, and it's possible to make button caps with e.g. triangular shape pointing up and down. The buttons should probably be shorter in that case, and the lid holes should match the button shape.
 - Using a real custom PCB would just look better.
