@@ -222,7 +222,7 @@ struct Settings {
 #define MSTATE_BACKSPIN 4
 
 #define MOTOR_MIN_SPEED 200     // steps per second
-#define MOTOR_MAX_SPEED 4000    // steps per second
+#define MOTOR_MAX_SPEED 3000    // steps per second
 #define MOTOR_ACCELERATION 4000 // steps per sedond per second
 
 // Number of steps to take in the opposite direction after decelerating and before disconnecting the motor, to release tension
@@ -421,11 +421,11 @@ public:
   int getDirection() { return direction; }
 
   bool getPositionPercentage(int& percent) {
-    if (settings->positionTop == 0 || settings->positionBottom == 0 || settings->positionTop == settings->positionBottom)
+    long positionDiff = settings->positionTop - settings->positionBottom - MOTOR_BACKSPIN_STEPS * 2;
+    if (settings->positionTop == 0 || settings->positionBottom == 0 || positionDiff <= 0)
       return false;
 
-    long positionDiff = settings->positionTop - settings->positionBottom;
-    percent = ((settings->position - settings->positionBottom) * 100 + (positionDiff >> 1)) / positionDiff;
+    percent = ((settings->position - settings->positionBottom - MOTOR_BACKSPIN_STEPS) * 100 + (positionDiff >> 1)) / positionDiff;
     percent = max(0, min(100, percent));
     return true;
   }
