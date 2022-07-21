@@ -219,10 +219,15 @@ struct Settings {
 #define MSTATE_ACCELERATE 1
 #define MSTATE_RUN 2
 #define MSTATE_DECELERATE 3
+#define MSTATE_BACKSPIN 4
 
 #define MOTOR_MIN_SPEED 200     // steps per second
 #define MOTOR_MAX_SPEED 4000    // steps per second
 #define MOTOR_ACCELERATION 4000 // steps per sedond per second
+
+// Number of steps to take in the opposite direction after decelerating and before disconnecting the motor, to release tension
+#define MOTOR_BACKSPIN_STEPS 800
+#define MOTOR_BACKSPIN_SPEED 800
 
 // Solution for the distance of an accelerated object traveling between two speed values
 #define MOTOR_ACCELERATION_STEPS ((MOTOR_MAX_SPEED * MOTOR_MAX_SPEED - MOTOR_MIN_SPEED * MOTOR_MIN_SPEED) / (2 * MOTOR_ACCELERATION))
@@ -247,6 +252,7 @@ private:
   long speed = 0; // in steps per second
   unsigned long accelerateStartMicros = 0;
   int direction = 0;
+  int backspinStepsLeft = 0;
   bool ignoreLimits = false;
   long targetPosition = 0;
   Settings* settings = NULL;
@@ -328,12 +334,20 @@ public:
     case MSTATE_DECELERATE:
       speed = MOTOR_MAX_SPEED - ((entranceMicros - accelerateStartMicros) * MOTOR_ACCELERATION) / MICROSECONDS_IN_SECOND;
       if (speed <= MOTOR_MIN_SPEED) {
-        stop();
+        backspinStepsLeft = MOTOR_BACKSPIN_STEPS;
+        state = MSTATE_BACKSPIN;
+        direction = !direction;
+        digitalWrite(PIN_MOTOR_DIR, direction);
       }
+      break;
+    case MSTATE_BACKSPIN:
+      speed = MOTOR_BACKSPIN_SPEED;
+      if (--backspinStepsLeft <= 0)
+        stop();
       break;
     }
 
-    if (!ignoreLimits) {
+    if (!ignoreLimits && state != MSTATE_BACKSPIN) {
       // Stop at the limits, if they are set
       if (settings->isOffLimits(direction == MOTOR_DIRECTION_UP, MOTOR_ACCELERATION_STEPS, targetPosition))
         softStop();
